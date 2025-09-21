@@ -18,12 +18,11 @@ int main() {
 
         switch (op) {
             case 1:
-                char *new = ReadStr(100);
-
+                char *new = ReadStr(50);
                 InsertStr(src, new);
                 break;
             case 2:
-                char *str = ReadStr(100);
+                char *str = ReadStr(20);
                 RemoveStr(src, str);
                 break;
             case 3:
@@ -55,7 +54,8 @@ int Menu(void) {
 
 char *ReadStr(int length) {
     char *new;
-    new = (char *)malloc(length * sizeof(char));
+    new = (char *)malloc(50 * sizeof(char));
+
     printf("\n\tDigite: ");
     scanf(" %[^\n]", new);
     return new;
@@ -63,35 +63,32 @@ char *ReadStr(int length) {
 
 void InsertStr(char *src, char *new) {
     strcpy(new, strcat(new, " "));
-    int newWordLength = (strlen(src) + strlen(new)) - 1;
+    printf("%d", strlen(src));
+    int newWordLength = (strlen(src) + strlen(new)) - 1; 
     src = (char *)realloc(src, newWordLength * sizeof(char));
     strcpy(src, strcat(src, new));
 }
 
 void RemoveStr(char *src, char *str) {
-    char *test;
+    char *token, *new, *aux;
+    new = (char *)malloc(sizeof(char));
+    aux = (char *)malloc(sizeof(char));
 
-    test = strtok(src, " ");
-    printf("PRÉ: %s\n", src);
-
-    while (test != NULL) {
-        if (strcmp(test,str) == 0)
-        {
-            // int newWordLength = strlen(src)-strlen(str);
-            // src = (char *)realloc(src, newWordLength * sizeof(char));
-            printf("Igual");
-        }
-        //  else{
-            strcpy(src,strcat(src, " de boa"));
-            // strcpy(src,strcat(src,test));
-            // printf("%s", src);
-        // }
-
-        // printf("%s\n", test);
-        
-        test = strtok(NULL, " ");
+    token = strtok(src, " ");    
+    while (token != NULL) {
+        if (strcmp(token, str) != 0) {
+            new = (char *)realloc(new, (strlen(new)+strlen(token)) * sizeof(char));
+            aux = (char *)realloc(aux, (strlen(token)+1) * sizeof(char));
+            strcpy(aux, token);
+            strcpy(aux, strcat(aux, " "));
+            strcpy(new, strcat(new, aux));
+        }        
+        token = strtok(NULL, " ");
     }
-
-    printf("PÓS: %s\n", src);
-
+    int newLen = strlen(new);
+    src = (char *)realloc(src, newLen * sizeof(char));
+    strcpy(src,new);
+    free(aux);
+    free(token);
+    free(new);
 }
