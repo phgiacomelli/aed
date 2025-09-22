@@ -54,7 +54,7 @@ int Menu(void) {
 
 char *ReadStr(int length) {
     char *new;
-    new = (char *)malloc(50 * sizeof(char));
+    new = (char *)malloc(length * sizeof(char));
 
     printf("\n\tDigite: ");
     scanf(" %[^\n]", new);
@@ -62,11 +62,11 @@ char *ReadStr(int length) {
 }
 
 void InsertStr(char *src, char *new) {
-    strcpy(new, strcat(new, " "));
-    printf("%d", strlen(src));
-    int newWordLength = (strlen(src) + strlen(new)) - 1; 
+    strcat(new, " ");
+    int newWordLength = strlen(src) + strlen(new); 
     src = (char *)realloc(src, newWordLength * sizeof(char));
-    strcpy(src, strcat(src, new));
+    strcat(src, new);
+    free(new);
 }
 
 void RemoveStr(char *src, char *str) {
@@ -80,8 +80,8 @@ void RemoveStr(char *src, char *str) {
             new = (char *)realloc(new, (strlen(new)+strlen(token)) * sizeof(char));
             aux = (char *)realloc(aux, (strlen(token)+1) * sizeof(char));
             strcpy(aux, token);
-            strcpy(aux, strcat(aux, " "));
-            strcpy(new, strcat(new, aux));
+            strcat(aux, " ");
+            strcat(new, aux);
         }        
         token = strtok(NULL, " ");
     }
