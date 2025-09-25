@@ -10,7 +10,6 @@ int main() {
         printf("Palindromo\n");
     }
 
-    
     return 0;
 }
 
@@ -24,7 +23,6 @@ bool isPalindrome(int x) {
         if(str[i] != str[len - 1 -i])
             return false;
         
-
     return true;
 }
 
