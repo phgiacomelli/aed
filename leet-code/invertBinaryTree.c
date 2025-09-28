@@ -4,9 +4,11 @@
 
 struct TreeNode {
     int val;
-    struct TreeNode *left;
-    struct TreeNode *right;
+    struct TreeNode* left;
+    struct TreeNode* right;
 };
+
+struct TreeNode* invertTree(struct TreeNode* root);
 
 int main() {
     struct TreeNode val1;
@@ -15,51 +17,35 @@ int main() {
     val1.right = NULL;
 
     struct TreeNode val2;
-    val1.val = 3;
-    val1.left = NULL;
-    val1.right = NULL;
+    val2.val = 3;
+    val2.left = NULL;
+    val2.right = NULL;
 
     struct TreeNode val3;
-    val1.val = 6;
-    val1.left = &val1;
-    val1.right = &val2;
+    val3.val = 6;
+    val3.left = &val1;
+    val3.right = &val2;
 
-    struct TreeNode* val4;
-    val4 = &val3;
-    struct TreeNode* val5;
-    val5 = &val1;
-    // val1.val = 9;
-    // val1.left = NULL;
-    // val1.right = NULL;
+    struct TreeNode* root;
+    root = &val3;
 
-    struct TreeNode* val6;
-    val6 = val4->left;
+    root = invertTree(root);
 
-    if ( val6->left != NULL)
-    {
-        printf("%d\n", val5->val);
-    }
     
     return 0;
 }
 
 struct TreeNode* invertTree(struct TreeNode* root) {
-
-    //  if(root->left != NULL && root->right != NULL){
-    //     struct TreeNode* cp = NULL;
-    //     cp = (struct TreeNode*)malloc(sizeof(struct TreeNode*)); 
-    //     cp = root->left;
-    //     root->left = root->right;
-    //     root->right = cp;
-    //     invertTree(root->left);
-    //     invertTree(root->right);
-    // }
-
-
-
-
-    // return root;
+    if (root == NULL)
+        return NULL;
+    
+    struct TreeNode* cp = root->left;
+    root->left = root->right;
+    root->right = cp;
+    
+    invertTree(root->left);
+    invertTree(root->right);
     
 
-    
+    return root;
 }
