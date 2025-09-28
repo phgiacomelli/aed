@@ -10,11 +10,12 @@ int main() {
 }
 
 int romanToInt(char* s) {
+    if(s==NULL) return 0;
     int len = strlen(s);
     int nums[len];
     int total = 0;
     int lastValue = 0, currentValue;
-    
+
     for (int i = len - 1; i >= 0; i--) {
         switch (s[i]) {
             case 'I':
