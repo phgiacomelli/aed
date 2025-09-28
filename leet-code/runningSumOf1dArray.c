@@ -7,19 +7,19 @@ int* runningSum(int* nums, int numsSize, int* returnSize);
 int main() {
     int nums[] = {1, 2, 3, 4};
 
-    int returnSize = 0;
-    int* result;
+    int *returnSize, *result;
     result = runningSum(&nums[0], 4, &returnSize);
-
+    
     for (int i = 0; i < returnSize; i++) {
         printf("%d ", *(result + i));
     }
-
+    
     return 0;
 }
 
 int* runningSum(int* nums, int numsSize, int* returnSize) {
     int* result;
+    *returnSize = 0;
     result = (int*)malloc(numsSize * sizeof(int));
     int limit = 0, sum = 0;
     for (int i = 0; *returnSize < numsSize; i++) {
