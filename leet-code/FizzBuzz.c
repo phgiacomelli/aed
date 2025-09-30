@@ -12,6 +12,7 @@ int main() {
     for (int i = 0; i < returnSize; i++)
         printf("%s\n",answer[i]);  
 
+    free(answer);
     return 0;
 }
 
