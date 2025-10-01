@@ -11,11 +11,13 @@ int main() {
 }
 
 int reverse(int x) {
-    signed int reverse = 0;
+    double reverse = 0;
     while (x != 0) {
         reverse = (10*reverse) + x%10;
         x/=10;
     }
+    if(reverse < pow(-2,31) || reverse > pow(2,31)) 
+        return 0;
 
     return reverse;
 }
