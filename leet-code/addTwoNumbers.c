@@ -7,15 +7,15 @@ struct ListNode {
 };
 
 struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
-    int sum = 0, carry = 0;
-    struct ListNode *head = NULL, *last = NULL;;
+    int sum = 0, carry = 0 , v1, v2;
+    struct ListNode *head = NULL, *last = NULL;
 
     while (l1 != NULL || l2 != NULL || carry > 0) {
 
-        int num1 = (l1 != NULL) ? l1->val : 0;
-        int num2 = (l2 != NULL) ? l2->val : 0;
+        v1 = l1 ? l1->val : 0;
+        v2 = l2 ? l2->val : 0;
 
-        sum = num1 + num2 + carry;
+        sum = v1 + v2 + carry;
         carry = sum / 10;
         sum %= 10;
 
@@ -23,17 +23,17 @@ struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
         new->val = sum;
         new->next = NULL;
 
-        if (head == NULL) {
+        if (!head)
             head = new;
-            last = new;
-        } else {
+         else 
             last->next = new;
-            last = new;
-        }
+        
+        last = new;
 
         l1 = (l1==NULL) ? NULL: l1->next;
         l2 = (l2==NULL) ? NULL: l2->next;
     }
+
     return head;
 }
 
