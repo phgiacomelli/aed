@@ -9,10 +9,10 @@ int main() {
     char s[] = "PAYPALISHIRING";
     // char s[] = "AB";
     int numRows = 3;
-
+    
     char* result = convert(s, numRows);
-
     printf("%s", result);
+    free(result);
 
     return 0;
 }
@@ -23,49 +23,47 @@ char* convert(char* s, int numRows) {
     if (numRows == 1)
         return s;
 
-    char** result = (char**)malloc(numRows * sizeof(char*));
-    int *indices = (int *)malloc(numRows * sizeof(int));
+    char** strs= (char**)malloc(numRows * sizeof(char*));
+    int* strsLen = (int *)malloc(numRows * sizeof(int));
 
     for (int j = 0; j < numRows; j++){
-        result[j] = (char*)malloc((len+1)*sizeof(char));
-        *result[j] = '\0';
-        *(indices+j) = 0;
+        strs[j] = (char*)malloc((len+1)*sizeof(char));
+        *strs[j] = '\0';
+        *(strsLen+j) = 0;
     }
 
-    bool crescente = true;
-    int i = 0, strI = 0;
-    while (strI < len) {
+    bool ascending = true;
+    int i = 0, resultIndex = 0;
+    while (resultIndex < len) {
         
         if (i == (numRows - 1))
-            crescente = false;
+            ascending = false;
         else if (i == 0)
-            crescente = true;
+            ascending = true;
 
-        // int currentIndex = strlen(result[i]);
-        int *currentIndex = indices+i;
+        int *currentIndex = strsLen+i;
 
-        // result[i] = (char*)realloc(result[i], (currentIndex + 1) * sizeof(char));
-        result[i][*currentIndex] = s[strI];
-        result[i][*(currentIndex)+1] = '\0';
-        *(currentIndex)+=1;
-        i = crescente ? i + 1 : i - 1;
+        strs[i][*currentIndex] = s[resultIndex];
+        strs[i][++*(currentIndex)] = '\0';
 
-        strI++;
+        i = ascending ? i + 1 : i - 1;
+
+        resultIndex++;
     }
 
-    char* res = (char*)malloc((len+1) * sizeof(char));
-    int indice = 0;
-    for (int i = 0; i < numRows; i++) {
-        for (int j = 0; result[i][j] != '\0'; j++) {
-            res[indice] = result[i][j];
-            indice++;
+    char* result = (char*)malloc((len+1) * sizeof(char));
+    resultIndex = 0;
+    for (int k = 0; k < numRows; k++) {
+        for (int j = 0; strs[k][j] != '\0'; j++) {
+            result[resultIndex] = strs[k][j];
+            resultIndex++;
         }
+        free(strs[k]);
     }
-    res[indice] = '\0';
+    result[resultIndex] = '\0';
 
-    return res;
+    free(strs);
+    free(strsLen);
+
+    return result;
 }
-
-//  0   0   0
-//  1 1 1 1 1
-//  2   2   2
