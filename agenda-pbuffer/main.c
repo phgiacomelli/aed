@@ -14,6 +14,7 @@ void clearStdinBuffer(void);
 void addPerson(void** pBuffer);
 void printPerson(void* pBuffer);
 void listPeople(void* pBuffer);
+void deletePerson(void** pBuffer);
 
 int main() {
     void* pBuffer = malloc(BUFFER_INITIAL_SIZE);
@@ -47,7 +48,7 @@ int main() {
                 break;
             case 2:
                 printf("\n---[ 2. REMOVER PESSOA ]---\n");
-                printf("Remover Pessoa.\n");
+                deletePerson(&pBuffer);
                 break;
             case 3:
                 printf("\n---[ 3. BUSCAR PESSOA POR EMAIL ]---\n");
@@ -174,22 +175,24 @@ void printPerson(void* pBuffer) {
     char* nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
     char* emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
     printf("\nEmail: ");
-    scanf("%s", emailTemp);
+    scanf(" %49[^\n]", emailTemp);
     clearStdinBuffer();
 
     void* personPtr = getPersonByEmail(pBuffer);
 
     if (personPtr == NULL) {
         printf("\nPessoa não encontrada!\n");
-    } else {
-        int* age = (int*)personPtr;
-        char* name = (char*)((char*)personPtr + sizeof(int));
-        char* email = (char*)(name + strlen(name) + 1);
-
-        printf("\nNome: %s\n", name);
-        printf("Email: %s\n", email);
-        printf("Idade: %d\n", *age);
+        return;
     }
+
+    int* age = (int*)personPtr;
+    char* name = (char*)((char*)personPtr + sizeof(int));
+    char* email = (char*)(name + strlen(name) + 1);
+
+    printf("\nNome: %s\n", name);
+    printf("Email: %s\n", email);
+    printf("Idade: %d\n", *age);
+
     emailTemp[0] = '\0';
 }
 
@@ -197,7 +200,7 @@ void listPeople(void* pBuffer) {
     size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
 
     if (!*peopleSize) {
-        printf("\tNão há nenhuma pessoa na lista!\n");
+        printf("\nNão há nenhuma pessoa na lista!\n");
         return;
     }
 
@@ -215,4 +218,48 @@ void listPeople(void* pBuffer) {
 
         currentPtr = (void*)((char*)email + strlen(email) + 1);
     }
+}
+
+void deletePerson(void** pBuffer) {
+    size_t* peopleSize = (size_t*)((char*)*pBuffer + sizeof(int));
+    char* nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
+    char* emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
+
+    printf("\nEmail: ");
+    scanf(" %49[^\n]", emailTemp);
+    clearStdinBuffer();
+
+    void* personPtr = getPersonByEmail(*pBuffer);
+
+    if (personPtr == NULL) {
+        printf("\nPessoa não encontrada!\n");
+        emailTemp[0] = '\0';
+        return;
+    }
+    char* name = (char*)((char*)personPtr + sizeof(int));
+    char* email = (char*)(name + strlen(name) + 1);
+
+    // ptr para o inicio dos dados da proxima pessoa
+    void* nextPersonPtr = (void*)((char*)email + strlen(email) + 1);
+
+    // final da lista de pessoas
+    void* endPtr = (void*)((char*)*pBuffer + BUFFER_INITIAL_SIZE + *peopleSize);
+
+    // verificamos, para nao mover "pra frente"
+    if (nextPersonPtr < endPtr) {
+        memmove(personPtr, nextPersonPtr, (char*)endPtr - (char*)nextPersonPtr);
+    }
+    //memmove vai mover x bytes (3o param.) da memoria, a partir do 2o elemento, para a posicao do primeiro elemento
+    // ou seja, pega do nextPersonPtr até o final da lista, e move tudo para tras, ate chegar na posicao de personPtr
+    // o que equivale a trazer os dados para tras, sobrescrevendo a pessoa que deveria ser removida
+ 
+    *peopleSize -= (sizeof(int) + (strlen(name) + 1) + (strlen(email) + 1));
+    emailTemp[0] = '\0';
+
+    *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleSize);
+    if (!*pBuffer) {
+        printf("Memória insuficiente!");
+        return;
+    }
+    printf("\nPessoa removida!\n");
 }
