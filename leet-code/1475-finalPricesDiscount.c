@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,25 +17,6 @@ int main() {
 
     return 0;
 }
-
-// int* finalPrices(int* prices, int pricesSize, int* returnSize) {
-//     if (pricesSize < 1)
-//         return NULL;
-
-//     *returnSize = pricesSize;
-//     int* result = (int*)malloc(pricesSize * sizeof(int));
-
-//     for (int i = pricesSize - 1; i >= 0; i++) {
-//         for (int j = i - 1; j >= 0; j++) {
-//             if (prices[j] < prices[i]) {
-//                 result[i] = prices[i] - prices[j];
-
-//             }
-//         }
-//     }
-
-//     return result;
-// }
 
 int* finalPrices(int* prices, int pricesSize, int* returnSize) {
     if (pricesSize < 1)
