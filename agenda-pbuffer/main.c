@@ -9,9 +9,11 @@
 // int, int, char[50], char[50],
 
 void menu(void* pBuffer);
-bool getPersonByEmail(void* pBuffer);
-void addPerson(void** pBuffer);
+void* getPersonByEmail(void* pBuffer);
 void clearStdinBuffer(void);
+void addPerson(void** pBuffer);
+void printPerson(void* pBuffer);
+void listPeople(void* pBuffer);
 
 int main() {
     void* pBuffer = malloc(BUFFER_INITIAL_SIZE);
@@ -31,12 +33,13 @@ int main() {
     nameTemp[0] = emailTemp[0] = '\0';
 
     while (1) {
+        choice = (int*)pBuffer;
+
         if (*choice == 5)
             break;
 
         menu(pBuffer);
 
-        choice = (int*)pBuffer;
         switch (*choice) {
             case 1:
                 addPerson(&pBuffer);
@@ -45,18 +48,16 @@ int main() {
                 printf("Remover Pessoa.\n");
                 break;
             case 3:
-                printf("Buscar Pessoa.\n");
+                printPerson(pBuffer);
                 break;
             case 4:
-                printf("Listar todos.\n");
+                listPeople(pBuffer);
                 break;
             case 5:
                 printf("Saindo...\n");
                 break;
         }
     }
-    int *age = (int *)((char *)pBuffer+BUFFER_INITIAL_SIZE);
-    printf("%d", *age);
 
     free(pBuffer);
     return 0;
@@ -92,19 +93,28 @@ void clearStdinBuffer() {
     }
 }
 
-bool getPersonByEmail(void* pBuffer) {
+void* getPersonByEmail(void* pBuffer) {
     size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
-    // printf("", *peopleSize);
 
-    if (!*peopleSize) {
-        return false;
-    }
+    if (!*peopleSize)
+        return NULL;
 
     char* emailTemp = (char*)(pBuffer + BUFFER_INITIAL_SIZE - STR_MAX_SIZE);
 
-    printf("%s", emailTemp);
+    void* currentPtr = (char*)pBuffer + BUFFER_INITIAL_SIZE;
+    void* endPtr = (char*)currentPtr + *peopleSize;
 
-    return true;
+    while (currentPtr < endPtr) {
+        char* currentName = (char*)((char*)currentPtr + sizeof(int));
+        char* currentEmail = (char*)(currentName + strlen(currentName) + 1);
+
+        if (strcmp(currentEmail, emailTemp) == 0)
+            return currentPtr;
+
+        currentPtr = (void*)((char*)currentEmail + strlen(currentEmail) + 1);
+    }
+
+    return NULL;
 }
 
 void addPerson(void** pBuffer) {
@@ -119,14 +129,16 @@ void addPerson(void** pBuffer) {
     scanf(" %49[^\n]", emailTemp);
     clearStdinBuffer();
 
-    if (getPersonByEmail(*pBuffer)) {
+    if (getPersonByEmail(*pBuffer) != NULL) {
         printf("Já existe uma pessoa com este email!");
+        nameTemp[0] = '\0';
+        emailTemp[0] = '\0';
         return;
     }
 
     size_t* peopleSize = (size_t*)((char*)*pBuffer + sizeof(int));
     // pBuffer = tamanho_fixo + tamanho_pessoas + 1 int + (nome+\0) + (email+\0)
-    *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleSize + sizeof(int) + ((strlen(nameTemp) + strlen(emailTemp) + 2) * sizeof(char)));
+    *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleSize + sizeof(int) + (strlen(nameTemp) + 1) + (strlen(emailTemp) + 1));
 
     if (!*pBuffer) {
         printf("Memória insuficiente!");
@@ -151,4 +163,53 @@ void addPerson(void** pBuffer) {
     *peopleSize += sizeof(int) + (strlen(nameTemp) + 1) + (strlen(emailTemp) + 1);
     nameTemp[0] = '\0';
     emailTemp[0] = '\0';
+}
+
+void printPerson(void* pBuffer) {
+    size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
+    char* nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
+    char* emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
+
+    printf("\n\tEmail: ");
+    scanf("%s", emailTemp);
+    clearStdinBuffer();
+
+    void* personPtr = getPersonByEmail(pBuffer);
+
+    if (personPtr == NULL) {
+        printf("Pessoa não encontrada!\n");
+    } else {
+        int* age = (int*)personPtr;
+        int* name = (char*)(personPtr + sizeof(int));
+        int* email = (char*)(name + strlen(name) + 1);
+
+        printf("\n\tNome: %s\n", name);
+        printf("\n\tEmail: %s\n", email);
+        printf("\n\tIdade: %d\n", *age);
+    }
+    emailTemp[0] = '\0';
+}
+
+void listPeople(void* pBuffer) {
+    size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
+
+    if (!*peopleSize) {
+        printf("\tNão há nenhuma pessoa na lista!\n");
+        return;
+    }
+
+    void* currentPtr = (char*)pBuffer + BUFFER_INITIAL_SIZE;
+    void* endPtr = (char*)currentPtr + *peopleSize;
+
+    while (currentPtr < endPtr) {
+        int* age = (int*)currentPtr;
+        char* name = (char*)((char*)currentPtr + sizeof(int));
+        char* email = (char*)(name + strlen(name) + 1);
+
+        printf("\n\tNome: %s\n", name);
+        printf("\tEmail: %s\n", email);
+        printf("\tIdade: %d\n", *age);
+
+        currentPtr = (void*)((char*)email + strlen(email) + 1);
+    }
 }
