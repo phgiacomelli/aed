@@ -166,6 +166,10 @@ void addPerson(void** pBuffer) {
     clearStdinBuffer();
 
     *peopleSize += sizeof(int) + (strlen(nameTemp) + 1) + (strlen(emailTemp) + 1);
+    
+    nameTemp = (char*)((char*)*pBuffer + sizeof(int) + sizeof(size_t));
+    emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
+
     nameTemp[0] = '\0';
     emailTemp[0] = '\0';
 }
@@ -245,6 +249,7 @@ void deletePerson(void** pBuffer) {
     // final da lista de pessoas
     void* endPtr = (void*)((char*)*pBuffer + BUFFER_INITIAL_SIZE + *peopleSize);
 
+    *peopleSize -= (sizeof(int) + (strlen(name) + 1) + (strlen(email) + 1));
     // verificamos, para nao mover "pra frente"
     if (nextPersonPtr < endPtr) {
         memmove(personPtr, nextPersonPtr, (char*)endPtr - (char*)nextPersonPtr);
@@ -252,8 +257,7 @@ void deletePerson(void** pBuffer) {
     //memmove vai mover x bytes (3o param.) da memoria, a partir do 2o elemento, para a posicao do primeiro elemento
     // ou seja, pega do nextPersonPtr até o final da lista, e move tudo para tras, ate chegar na posicao de personPtr
     // o que equivale a trazer os dados para tras, sobrescrevendo a pessoa que deveria ser removida
- 
-    *peopleSize -= (sizeof(int) + (strlen(name) + 1) + (strlen(email) + 1));
+
     emailTemp[0] = '\0';
 
     *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleSize);
@@ -261,5 +265,10 @@ void deletePerson(void** pBuffer) {
         printf("Memória insuficiente!");
         return;
     }
+
+    peopleSize = (size_t*)((char*)*pBuffer + sizeof(int));
+    nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
+    emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
+
     printf("\nPessoa removida!\n");
 }
