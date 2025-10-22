@@ -42,19 +42,23 @@ int main() {
 
         switch (*choice) {
             case 1:
+                printf("\n---[ 1. ADICIONAR PESSOA ]---\n");
                 addPerson(&pBuffer);
                 break;
             case 2:
+                printf("\n---[ 2. REMOVER PESSOA ]---\n");
                 printf("Remover Pessoa.\n");
                 break;
             case 3:
+                printf("\n---[ 3. BUSCAR PESSOA POR EMAIL ]---\n");
                 printPerson(pBuffer);
                 break;
             case 4:
+                printf("\n---[ 4. LISTAR TODAS AS PESSOAS ]---\n");
                 listPeople(pBuffer);
                 break;
             case 5:
-                printf("Saindo...\n");
+                printf("\nSaindo da agenda... Até logo!\n\n");
                 break;
         }
     }
@@ -165,6 +169,29 @@ void addPerson(void** pBuffer) {
     emailTemp[0] = '\0';
 }
 
+void printPerson(void* pBuffer) {
+    size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
+    char* nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
+    char* emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
+    printf("\nEmail: ");
+    scanf("%s", emailTemp);
+    clearStdinBuffer();
+
+    void* personPtr = getPersonByEmail(pBuffer);
+
+    if (personPtr == NULL) {
+        printf("\nPessoa não encontrada!\n");
+    } else {
+        int* age = (int*)personPtr;
+        char* name = (char*)((char*)personPtr + sizeof(int));
+        char* email = (char*)(name + strlen(name) + 1);
+
+        printf("\nNome: %s\n", name);
+        printf("Email: %s\n", email);
+        printf("Idade: %d\n", *age);
+    }
+    emailTemp[0] = '\0';
+}
 
 void listPeople(void* pBuffer) {
     size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
@@ -182,9 +209,9 @@ void listPeople(void* pBuffer) {
         char* name = (char*)((char*)currentPtr + sizeof(int));
         char* email = (char*)(name + strlen(name) + 1);
 
-        printf("\n\tNome: %s\n", name);
-        printf("\tEmail: %s\n", email);
-        printf("\tIdade: %d\n", *age);
+        printf("\nNome: %s\n", name);
+        printf("Email: %s\n", email);
+        printf("Idade: %d\n", *age);
 
         currentPtr = (void*)((char*)email + strlen(email) + 1);
     }
