@@ -165,30 +165,6 @@ void addPerson(void** pBuffer) {
     emailTemp[0] = '\0';
 }
 
-void printPerson(void* pBuffer) {
-    size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
-    char* nameTemp = (char*)((char*)peopleSize + sizeof(size_t));
-    char* emailTemp = (char*)(nameTemp + STR_MAX_SIZE);
-
-    printf("\n\tEmail: ");
-    scanf("%s", emailTemp);
-    clearStdinBuffer();
-
-    void* personPtr = getPersonByEmail(pBuffer);
-
-    if (personPtr == NULL) {
-        printf("Pessoa não encontrada!\n");
-    } else {
-        int* age = (int*)personPtr;
-        int* name = (char*)(personPtr + sizeof(int));
-        int* email = (char*)(name + strlen(name) + 1);
-
-        printf("\n\tNome: %s\n", name);
-        printf("\n\tEmail: %s\n", email);
-        printf("\n\tIdade: %d\n", *age);
-    }
-    emailTemp[0] = '\0';
-}
 
 void listPeople(void* pBuffer) {
     size_t* peopleSize = (size_t*)((char*)pBuffer + sizeof(int));
