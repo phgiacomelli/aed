@@ -142,12 +142,14 @@ void addPerson(void** pBuffer) {
 
     size_t* peopleDataSize = (size_t*)((char*)*pBuffer + sizeof(int));
     // pBuffer = tamanho_fixo + tamanho_pessoas + 1 int + (nome+\0) + (email+\0)
-    *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleDataSize + sizeof(int) + (strlen(tempName) + 1) + (strlen(tempEmail) + 1));
+    void* tempBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleDataSize + sizeof(int) + (strlen(tempName) + 1) + (strlen(tempEmail) + 1));
 
-    if (!*pBuffer) {
+    if (!tempBuffer) {
         printf("Memória insuficiente!");
         return;
     }
+
+    *pBuffer = tempBuffer;
 
     peopleDataSize = (size_t*)((char*)*pBuffer + sizeof(int));
     tempName = (char*)((char*)*pBuffer + sizeof(int) + sizeof(size_t));
@@ -165,9 +167,6 @@ void addPerson(void** pBuffer) {
     clearStdinBuffer();
 
     *peopleDataSize += sizeof(int) + (strlen(tempName) + 1) + (strlen(tempEmail) + 1);
-
-    tempName = (char*)((char*)*pBuffer + sizeof(int) + sizeof(size_t));
-    tempEmail = (char*)(tempName + STR_MAX_SIZE);
 
     tempName[0] = '\0';
     tempEmail[0] = '\0';
@@ -259,15 +258,13 @@ void deletePerson(void** pBuffer) {
 
     tempEmail[0] = '\0';
 
-    *pBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleDataSize);
-    if (!*pBuffer) {
+    void* tempBuffer = realloc(*pBuffer, BUFFER_INITIAL_SIZE + *peopleDataSize);
+    if (!tempBuffer) {
         printf("Memória insuficiente!");
         return;
     }
 
-    peopleDataSize = (size_t*)((char*)*pBuffer + sizeof(int));
-    tempName = (char*)((char*)peopleDataSize + sizeof(size_t));
-    tempEmail = (char*)(tempName + STR_MAX_SIZE);
+    *pBuffer = tempBuffer;
 
     printf("\nPessoa removida!\n");
 }
