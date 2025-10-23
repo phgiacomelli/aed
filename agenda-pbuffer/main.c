@@ -103,7 +103,7 @@ void* getPersonByEmail(void* pBuffer) {
     if (!*peopleDataSize)
         return NULL;
 
-    char* tempEmail = (char*)(pBuffer + BUFFER_INITIAL_SIZE - STR_MAX_SIZE);
+    char* tempEmail = (char*)((char*)pBuffer + BUFFER_INITIAL_SIZE - STR_MAX_SIZE);
 
     void* personPtr = (char*)pBuffer + BUFFER_INITIAL_SIZE;
     void* peopleEnd = (char*)personPtr + *peopleDataSize;
@@ -224,7 +224,7 @@ void listPeople(void* pBuffer) {
 
 void deletePerson(void** pBuffer) {
     size_t* peopleDataSize = (size_t*)((char*)*pBuffer + sizeof(int));
-    char* tempName = (char*)((char*)peopleDataSize + sizeof(size_t));
+    char* tempName = (char*)((char*)peopleDataSize + sizeof(size_t));  // Não utilizado de fato, apenas para o calculo do tempEmail
     char* tempEmail = (char*)(tempName + STR_MAX_SIZE);
 
     printf("\nEmail: ");
