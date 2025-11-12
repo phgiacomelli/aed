@@ -1,4 +1,6 @@
-# Agenda pBuffer
+# Paulo Henrique Anesi Giacomelli - M2
+
+## Agenda pBuffer
 
 Faça uma agenda com o seguinte menu:    
 1- Adicionar Pessoa (Nome, Idade, email)  
@@ -24,4 +26,3 @@ o buffer vai ser composto por:
 
 | operação | tamanhoListaDePessoasEmBytes | nomeTemp | emailTemp | listaDePessoas |
 
-Utilizei esta abordagem pois acredito ser menos sucetível a erros. Primeiramente lemos os valores de uma nova pessoa, e adicionamos nas variáveis temporárias. Entao adicionamos na lista de pessoas, apenas se essa pessoa ainda nao existe na lista. Neste caso nao precisamos realocar a memória sem antes verificar se a pessoa já nao esta na lista.
